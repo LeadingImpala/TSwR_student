@@ -11,16 +11,18 @@ end = 5
 
 # traj_gen = ConstantTorque(np.array([0., 1.0])[:, np.newaxis])
 traj_gen = Sinusoidal(np.array([0., 1.]), np.array([2., 2.]), np.array([0., 0.]))
-# traj_gen = Poly3(np.array([0., 0.]), np.array([pi/4, pi/6]), end)
+#traj_gen = Poly3(np.array([0., 0.]), np.array([np.pi/4, np.pi/6]), end)
 
-b_est_1 = None
-b_est_2 = None
-kp_est_1 = None
-kp_est_2 = None
-kd_est_1 = None
-kd_est_2 = None
-p1 = None
-p2 = None
+'''b_est_1 = None
+b_est_2 = None'''
+kp_est_1 = 0.3
+kp_est_2 = 0.4
+
+kd_est_1 = 1.2
+kd_est_2 = 1.6
+
+p1 = 10
+p2 = 15
 
 q0, qdot0, _ = traj_gen.generate(0.)
 q1_0 = np.array([q0[0], qdot0[0]])
@@ -37,27 +39,77 @@ Q, Q_d, u, T = simulate("PYBULLET", traj_gen, controller, Tp, end)
 
 eso = np.array(controller.eso.states)
 
-plt.subplot(221)
-plt.plot(T, eso[:, 0])
-plt.plot(T, Q[:, 0], 'r')
-plt.subplot(222)
-plt.plot(T, eso[:, 2])
-plt.plot(T, Q[:, 2], 'r')
-plt.subplot(223)
-plt.plot(T, eso[:, 1])
-plt.plot(T, Q[:, 1], 'r')
-plt.subplot(224)
-plt.plot(T, eso[:, 3])
-plt.plot(T, Q[:, 3], 'r')
-plt.show()
+# First figure: ESO states vs actual joint states Q
+plt.figure(figsize=(12, 8))
 
 plt.subplot(221)
-plt.plot(T, Q[:, 0], 'r')
-plt.plot(T, Q_d[:, 0], 'b')
+plt.plot(T, eso[:, 0], label='ESO state 0')
+plt.plot(T, Q[:, 0], 'r', label='Q joint 0')
+plt.title('Joint 0: ESO State vs Actual')
+plt.xlabel('Time [s]')
+plt.ylabel('Position')
+plt.legend()
+plt.grid(True)
+
 plt.subplot(222)
-plt.plot(T, Q[:, 1], 'r')
-plt.plot(T, Q_d[:, 1], 'b')
+plt.plot(T, eso[:, 2], label='ESO state 2')
+plt.plot(T, Q[:, 2], 'r', label='Q dot joint 0')
+plt.title('Joint 0 Velocity: ESO vs Actual')
+plt.xlabel('Time [s]')
+plt.ylabel('Velocity')
+plt.legend()
+plt.grid(True)
+
 plt.subplot(223)
-plt.plot(T, u[:, 0], 'r')
-plt.plot(T, u[:, 1], 'b')
+plt.plot(T, eso[:, 1], label='ESO state 1')
+plt.plot(T, Q[:, 1], 'r', label='Q joint 1')
+plt.title('Joint 1: ESO State vs Actual')
+plt.xlabel('Time [s]')
+plt.ylabel('Position')
+plt.legend()
+plt.grid(True)
+
+plt.subplot(224)
+plt.plot(T, eso[:, 3], label='ESO state 3')
+plt.plot(T, Q[:, 3], 'r', label='Q dot joint 1')
+plt.title('Joint 1 Velocity: ESO vs Actual')
+plt.xlabel('Time [s]')
+plt.ylabel('Velocity')
+plt.legend()
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+
+# Second figure: Desired vs Actual trajectories and control inputs
+plt.figure(figsize=(12, 8))
+
+plt.subplot(221)
+plt.plot(T, Q[:, 0], 'r', label='Actual joint 0')
+plt.plot(T, Q_d[:, 0], 'b', label='Desired joint 0')
+plt.title('Joint 0 Position: Actual vs Desired')
+plt.xlabel('Time [s]')
+plt.ylabel('Position')
+plt.legend()
+plt.grid(True)
+
+plt.subplot(222)
+plt.plot(T, Q[:, 1], 'r', label='Actual joint 1')
+plt.plot(T, Q_d[:, 1], 'b', label='Desired joint 1')
+plt.title('Joint 1 Position: Actual vs Desired')
+plt.xlabel('Time [s]')
+plt.ylabel('Position')
+plt.legend()
+plt.grid(True)
+
+plt.subplot(223)
+plt.plot(T, u[:, 0], 'r', label='Control input joint 0')
+plt.plot(T, u[:, 1], 'b', label='Control input joint 1')
+plt.title('Control Inputs')
+plt.xlabel('Time [s]')
+plt.ylabel('Torque')
+plt.legend()
+plt.grid(True)
+
+plt.tight_layout()
 plt.show()

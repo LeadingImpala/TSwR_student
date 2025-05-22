@@ -10,7 +10,6 @@ class ESO:
         self.L = L
         self.state = np.pad(np.array(state), (0, A.shape[0] - len(state)))
         self.Tp = Tp
-        self.max_state = 1e3
         self.states = []
         #macierz C mówi nam co chcemy obserwować
         #W to macierz C
@@ -24,11 +23,9 @@ class ESO:
         error = np.array(q - y_hat).reshape(-1, 1)
         dx = self.A @ self.curr_state.reshape(-1, 1) + self.B @ u + self.L @ error
         self.state = (self.curr_state.reshape(-1, 1) + self.Tp * dx).flatten()
-        self.state = np.clip(self.state, -self.max_state, self.max_state)
 
 
-
-        self.states.append(copy(self.state))
+        self.states.append(self.state.copy())
 
     def get_state(self):
         return self.state.flatten()
