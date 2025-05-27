@@ -17,9 +17,9 @@ class ESO:
         self.B = np.array(B)
 
     def update(self, q, u):
-        self.curr_state = self.state.copy()  # current estimated state
-        y_hat = np.dot(self.W, self.curr_state)  # observer output
-        u = np.array(u).reshape(-1, 1)  # force column vector
+        self.curr_state = self.state.copy()
+        y_hat = np.dot(self.W, self.curr_state)
+        u = np.array(u).reshape(-1, 1)
         error = np.array(q - y_hat).reshape(-1, 1)
         dx = self.A @ self.curr_state.reshape(-1, 1) + self.B @ u + self.L @ error
         self.state = (self.curr_state.reshape(-1, 1) + self.Tp * dx).flatten()
