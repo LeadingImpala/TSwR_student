@@ -27,7 +27,7 @@ kd_est_1 = 0.4
 kd_est_2 = 0.9
 
 p1 = 70
-p2 = 155
+p2 = 115
 
 q0, qdot0, _ = traj_gen.generate(0.)
 q1_0 = np.array([q0[0], qdot0[0]])
